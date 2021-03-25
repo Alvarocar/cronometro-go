@@ -1,6 +1,7 @@
-package model
+package domain
 
 import (
+	"cronometro-go/chronometer/domain/state"
 	"fmt"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
@@ -19,30 +20,30 @@ type Chronometer struct{
 
 	isRunning bool
 
-	currentState ChronoState
+	currentState state.ChronoState
 
 	min int
 	seg int
 	delay int
 }
 
-func (this *Chronometer) startChrono () {
+func (this *Chronometer) StartChrono() {
 	this.currentState.StartChrono()
 }
 
-func (this *Chronometer) stopChrono () {
+func (this *Chronometer) StopChrono() {
 	this.currentState.StopChrono()
 }
 
-func (this *Chronometer) reloadChrono() {
+func (this *Chronometer) ReloadChrono() {
 	this.currentState.ReloadChrono()
 }
 
-func (this *Chronometer) finishChrono(){
+func (this *Chronometer) FinishChrono(){
 	this.currentState.FinishChrono()
 }
 
-func (this *Chronometer) SetState(s ChronoState){
+func (this *Chronometer) SetState(s state.ChronoState){
 	this.currentState = s
 }
 

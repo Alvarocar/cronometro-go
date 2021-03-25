@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cronometro-go/model"
+	"cronometro-go/chronometer/infraestructure"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
@@ -13,9 +13,9 @@ func main() {
 
 	myWindow.SetContent(
 		container.New(layout.NewVBoxLayout(),
-			model.NewChronometer(1),
-			model.NewChronometer(3),
-			model.NewChronometer(5)))
+			infraestructure.NewChronometer(1),
+			infraestructure.NewChronometer(3),
+			infraestructure.NewChronometer(5)))
 
 	myWindow.ShowAndRun()
 }

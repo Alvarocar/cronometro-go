@@ -1,4 +1,4 @@
-package model
+package state
 
 type ChronoState interface {
 	StartChrono()

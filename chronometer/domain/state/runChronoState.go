@@ -1,7 +1,11 @@
-package model
+package state
+
+import (
+	"cronometro-go/chronometer/domain"
+)
 
 type RunChronoState struct {
-	currentChrono *Chronometer
+	currentChrono *domain.Chronometer
 }
 
 func (this *RunChronoState) StartChrono() {

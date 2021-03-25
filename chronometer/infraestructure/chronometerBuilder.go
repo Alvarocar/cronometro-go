@@ -1,6 +1,8 @@
-package model
+package infraestructure
 
 import (
+	"cronometro-go/chronometer/domain"
+	"cronometro-go/chronometer/domain/state"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
@@ -12,9 +14,9 @@ import (
 //Create a new Chronometer
 func NewChronometer(delay int) *fyne.Container {
 
-	var myChrono Chronometer
+	var myChrono domain.Chronometer
 
-	myChrono.SetState(NewInitState(&myChrono))
+	myChrono.SetState(state.NewInitState(&myChrono))
 
 	myChrono.minLabel = binding.NewString()
 	myChrono.segLabel = binding.NewString()

@@ -1,10 +1,14 @@
-package model
+package state
+
+import (
+	"cronometro-go/chronometer/domain"
+)
 
 type InitChronoState struct {
-	currentChrono *Chronometer
+	currentChrono *domain.Chronometer
 }
 
-func NewInitState(c *Chronometer) *InitChronoState {
+func NewInitState(c *domain.Chronometer) *InitChronoState {
 	return &InitChronoState{c}
 }
 
