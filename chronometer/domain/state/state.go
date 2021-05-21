@@ -1,8 +1,8 @@
 package state
 
 type ChronoState interface {
-	StartChrono()
+	StartChrono(seg chan<- int, min chan<- int)
 	StopChrono()
-	ReloadChrono()
-	FinishChrono()
+	ReloadChrono(seg chan<- int, min chan<- int)
+	FinishChrono(seg chan<- int, min chan<- int)
 }

@@ -1,6 +1,7 @@
 package state
 
 import (
+	"context"
 	"cronometro-go/chronometer/domain"
 )
 
@@ -8,23 +9,22 @@ type StopChronoState struct {
 	currentChrono *domain.Chronometer
 }
 
-func (this *StopChronoState) StartChrono() {
-	//No hay nada por aqui
-}
-func (this *StopChronoState) StopChrono() {
-	//No hay nada por aca
-}
-func (this *StopChronoState) ReloadChrono() {
-	this.currentChrono.SetIsRunning(true)
-	this.currentChrono.RunChrono()
+func (this *StopChronoState) StartChrono(seg chan<- int, min chan<- int) {}
+
+func (this *StopChronoState) StopChrono() {}
+
+func (this *StopChronoState) ReloadChrono(seg chan<- int, min chan<- int) {
+	ctx, cancel := context.WithCancel(context.Background())
+	this.currentChrono.RunChrono(seg, min, ctx)
 	this.currentChrono.SetState(
-		&RunChronoState{
-			this.currentChrono})
+		&runChronoState{
+			this.currentChrono, &cancel})
 }
-func (this *StopChronoState) FinishChrono() {
-	this.currentChrono.SetIsRunning(false)
-	this.currentChrono.Clean()
+func (this *StopChronoState) FinishChrono(seg chan<- int, min chan<- int) {
+	this.currentChrono.Clean(seg, min)
+
 	this.currentChrono.SetState(
-		&InitChronoState{
-			this.currentChrono})
+		&initChronoState{
+			this.currentChrono,
+			context.Background()})
 }

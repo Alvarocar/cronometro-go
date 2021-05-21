@@ -1,72 +1,59 @@
 package domain
 
 import (
+	"context"
 	"cronometro-go/chronometer/domain/state"
-	"fmt"
-	"fyne.io/fyne/v2/data/binding"
-	"fyne.io/fyne/v2/widget"
-	"sync"
 	"time"
 )
 
 type Chronometer struct{
-	minLabel binding.String
-	segLabel binding.String
-
-	start       *widget.Button
-	stop        *widget.Button
-	reload      *widget.Button
-	finish      *widget.Button
-
-	isRunning bool
-
 	currentState state.ChronoState
-
 	min int
 	seg int
 	delay int
 }
 
-func (this *Chronometer) StartChrono() {
-	this.currentState.StartChrono()
+func (this *Chronometer) StartChrono(seg chan<- int, min chan<- int) {
+	this.currentState.StartChrono(seg, min)
 }
 
 func (this *Chronometer) StopChrono() {
 	this.currentState.StopChrono()
 }
 
-func (this *Chronometer) ReloadChrono() {
-	this.currentState.ReloadChrono()
+func (this *Chronometer) ReloadChrono(seg chan<- int, min chan<- int) {
+	this.currentState.ReloadChrono(seg, min)
 }
 
-func (this *Chronometer) FinishChrono(){
-	this.currentState.FinishChrono()
+func (this *Chronometer) FinishChrono(seg chan<- int, min chan<- int){
+	this.currentState.FinishChrono(seg, min)
 }
 
 func (this *Chronometer) SetState(s state.ChronoState){
 	this.currentState = s
 }
 
-func (this *Chronometer) RunChrono(){
-	segChan := make(chan int)
-	minChan := make(chan int)
-	go this.chronoRutine(segChan, minChan)
-	go this.refreshRutine(segChan, minChan)
+func (this *Chronometer) RunChrono(
+	segChan chan<- int, minChan chan<- int, ctx context.Context){
+	go this.chronoRutine(segChan, minChan, ctx)
 }
 
 func (this *Chronometer) chronoRutine(
-	segChan chan<- int, minChan chan<- int){
+	segChan chan<- int, minChan chan<- int, ctx context.Context){
 	defer close(segChan)
 	defer close(minChan)
 
 	for this.min < 999 {
 		for this.seg < 60 {
-			if this.isRunning {
-				segChan <- this.seg
-				time.Sleep(time.Second)
-				this.seg++
-			} else {
-				return
+			select {
+				case <-ctx.Done():
+					return
+				default:
+					if this.seg % this.delay == 0 {
+						segChan <- this.seg
+					}
+					time.Sleep(time.Second)
+					this.seg++
 			}
 		}
 		this.seg = 0
@@ -74,6 +61,7 @@ func (this *Chronometer) chronoRutine(
 		minChan <- this.min
 	}
 }
+/**
 
 func (this *Chronometer) refreshRutine(
 	segChan <-chan int, minChan <-chan int){
@@ -107,14 +95,10 @@ func (this *Chronometer) refreshRutine(
 	wg.Wait()
 }
 
-func (this *Chronometer) Clean(){
+ */
+func (this *Chronometer) Clean(seg chan<- int, min chan<- int){
 	this.min = 0
 	this.seg = 0
-	this.segLabel.Set("00")
-	this.minLabel.Set("0")
-}
-
-
-func (this *Chronometer) SetIsRunning(isRunning bool){
-	this.isRunning = isRunning
+	seg<- this.seg
+	min <-this.min
 }
